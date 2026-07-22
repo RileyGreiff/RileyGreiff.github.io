@@ -415,6 +415,71 @@ h1, h2, h3 {
   transform: scale(1.03);
 }
 
+/* Letterboxed card media (for screenshots whose native aspect ratio isn't 16:9) */
+.card__image--contain {
+  background: #1a1b1e;
+}
+
+.card__image--contain img {
+  object-fit: contain;
+}
+
+/* Terminal-window card media (for CLI/no-UI projects) */
+.card__image--terminal {
+  aspect-ratio: 16 / 9;
+  display: flex;
+  flex-direction: column;
+  background: #1a1b1e;
+}
+
+.terminal__bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 1.75rem;
+  padding: 0 0.75rem;
+  background: #2a2b2f;
+}
+
+.terminal__dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+}
+
+.terminal__dot--red { background: #ff5f56; }
+.terminal__dot--yellow { background: #ffbd2e; }
+.terminal__dot--green { background: #27c93f; }
+
+.terminal__title {
+  margin: 0 auto;
+  transform: translateX(-0.9rem);
+  font-size: var(--text-xs);
+  color: #8b8d94;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+}
+
+.terminal__body {
+  flex: 1;
+  padding: 0.85rem 1.1rem;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  color: #4ade80;
+  overflow: hidden;
+}
+
+.terminal__prompt {
+  color: #8b8d94;
+  margin-right: 0.4rem;
+}
+
+.terminal__muted {
+  color: #8b8d94;
+  margin-top: 0.4rem;
+}
+
 .card__body {
   padding: 1.5rem;
 }
