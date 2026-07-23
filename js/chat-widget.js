@@ -53,8 +53,11 @@
     fab.setAttribute('aria-label', 'Ask AI about Riley');
     fab.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
-      'stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
-      '<span>Ask AI</span>';
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/>' +
+      '<path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>' +
+      '<span class="cw-fab__text"><span class="cw-fab__label">Ask Riley&rsquo;s AI</span>' +
+      '<span class="cw-fab__sub">Grounded in his real projects</span></span>';
     fab.addEventListener('click', open);
     // Pulse for attention until the visitor has opened it at least once.
     if (!stored(OPENED_KEY)) fab.classList.add('cw-fab--pulse');
