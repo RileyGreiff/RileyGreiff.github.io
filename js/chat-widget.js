@@ -29,7 +29,16 @@
   var busy = false;
 
   // ── DOM refs (assigned in build) ──────────────────────────────────────────
-  var fab, panel, messagesEl, input, sendBtn, errorEl;
+  var fab, bubble, panel, messagesEl, input, sendBtn, errorEl;
+
+  var OPENED_KEY = 'cw-opened';
+  var BUBBLE_KEY = 'cw-bubble-dismissed';
+  function stored(key) {
+    try { return localStorage.getItem(key) === '1'; } catch (e) { return false; }
+  }
+  function remember(key) {
+    try { localStorage.setItem(key, '1'); } catch (e) { /* private mode */ }
+  }
 
   function el(tag, className, html) {
     var e = document.createElement(tag);
@@ -47,6 +56,21 @@
       'stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>' +
       '<span>Ask AI</span>';
     fab.addEventListener('click', open);
+    // Pulse for attention until the visitor has opened it at least once.
+    if (!stored(OPENED_KEY)) fab.classList.add('cw-fab--pulse');
+
+    // Attention bubble that pops up near the button and explains what it is.
+    bubble = el('div', 'cw-bubble');
+    bubble.innerHTML =
+      '<span>👋 <strong>New:</strong> Ask this AI anything about Riley&rsquo;s work — ' +
+      'it answers from his real projects &amp; resume, with sources.</span>' +
+      '<button class="cw-bubble__close" aria-label="Dismiss">&times;</button>';
+    bubble.addEventListener('click', open);
+    bubble.querySelector('.cw-bubble__close').addEventListener('click', function (e) {
+      e.stopPropagation();
+      hideBubble();
+      remember(BUBBLE_KEY);
+    });
 
     // Panel shell
     panel = el('div', 'cw-panel');
@@ -90,14 +114,32 @@
     panel.appendChild(form);
 
     document.body.appendChild(fab);
+    document.body.appendChild(bubble);
     document.body.appendChild(panel);
 
+    // Show the bubble a few seconds in, unless already opened or dismissed.
+    if (!stored(OPENED_KEY) && !stored(BUBBLE_KEY)) {
+      setTimeout(showBubble, 3500);
+    }
+
     renderMessages();
+  }
+
+  function showBubble() {
+    if (panel.classList.contains('cw-open')) return;
+    bubble.classList.add('cw-show');
+  }
+
+  function hideBubble() {
+    bubble.classList.remove('cw-show');
   }
 
   function open() {
     panel.classList.add('cw-open');
     fab.classList.add('cw-hidden');
+    fab.classList.remove('cw-fab--pulse');
+    hideBubble();
+    remember(OPENED_KEY);
     input.focus();
   }
 
@@ -110,6 +152,12 @@
     messagesEl.innerHTML = '';
 
     if (messages.length === 0) {
+      var intro = el('div', 'cw-intro',
+        '<strong>How this works:</strong> I’m a retrieval-augmented (RAG) assistant. ' +
+        'For each question I search Riley’s real GitHub projects and resume, then answer ' +
+        'from what I find and link the sources — so it’s grounded, not made up.');
+      messagesEl.appendChild(intro);
+
       var wrap = el('div', 'cw-starters');
       STARTERS.forEach(function (s) {
         var b = el('button', 'cw-starter', s);
